@@ -10,14 +10,18 @@
 │   ├── app/              # API routes, models, schemas, services, storage adapters
 │   ├── requirements.txt  # Python runtime dependencies
 │   └── .env.example      # Backend environment template
+├── frontend/             # React + TypeScript source application
+│   ├── src/              # Pages, components, API clients, auth context
+│   └── package-lock.json # Reproducible frontend dependency lockfile
 ├── deploy/               # Nginx and systemd deployment templates
 ├── docs/                 # Architecture, deployment, and security notes
-└── static/               # Current Vite build artifacts served by Nginx
+└── static/               # Current deployed Vite build artifacts served by Nginx
 ```
 
 ## Runtime Stack
 
 - Backend: FastAPI, Uvicorn, SQLAlchemy async, Pydantic Settings
+- Frontend: React, TypeScript, Vite, React Router, Framer Motion, dnd-kit
 - Database: SQLite through `sqlite+aiosqlite`
 - Auth: JWT bearer tokens and bcrypt password hashing
 - Web serving: Nginx static files with `/api/` reverse proxy to Uvicorn
@@ -48,7 +52,15 @@ API routes are mounted under:
 
 ## Frontend Static Assets
 
-The `static/` directory contains the current deployed Vite build artifacts copied from production. Original frontend source files were not present on the server path inspected during repository recovery, so this directory should be treated as a deployable artifact snapshot rather than maintainable frontend source.
+The `static/` directory contains the current deployed Vite build artifacts copied from production. The maintainable frontend source is in `frontend/`.
+
+```bash
+cd frontend
+npm ci
+npm run build
+```
+
+The output is written to `frontend/dist/`. Production deployment should publish the built files to `/opt/mingyue/static`.
 
 ## Deployment
 

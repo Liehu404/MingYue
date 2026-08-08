@@ -1,0 +1,18 @@
+<svg width="900" height="540" viewBox="0 0 900 540" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="540" fill="#F8FAFC"/>
+  <circle cx="210" cy="160" r="8" fill="#2563EB"/>
+  <circle cx="420" cy="120" r="10" fill="#3B82F6"/>
+  <circle cx="650" cy="170" r="7" fill="#60A5FA"/>
+  <circle cx="300" cy="320" r="9" fill="#2563EB"/>
+  <circle cx="520" cy="330" r="11" fill="#3B82F6"/>
+  <circle cx="700" cy="320" r="8" fill="#60A5FA"/>
+  <circle cx="420" cy="440" r="10" fill="#2563EB"/>
+  <path d="M210 160L420 120L650 170" stroke="#CBD5F5" stroke-width="2"/>
+  <path d="M210 160L300 320L420 440" stroke="#CBD5F5" stroke-width="2"/>
+  <path d="M420 120L520 330L700 320" stroke="#CBD5F5" stroke-width="2"/>
+  <path d="M300 320L520 330L700 320" stroke="#CBD5F5" stroke-width="2"/>
+  <path d="M420 440L520 330" stroke="#CBD5F5" stroke-width="2"/>
+  <circle cx="210" cy="160" r="20" stroke="#E2E8F0" stroke-width="2" opacity="0.6"/>
+  <circle cx="520" cy="330" r="26" stroke="#E2E8F0" stroke-width="2" opacity="0.4"/>
+  <circle cx="650" cy="170" r="18" stroke="#E2E8F0" stroke-width="2" opacity="0.5"/>
+</svg>

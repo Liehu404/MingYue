@@ -12,6 +12,9 @@ htmlcov/
 .venv/
 venv/
 env/
+frontend/node_modules/
+frontend/dist/
+frontend/*.tsbuildinfo
 
 # Runtime data
 *.db
