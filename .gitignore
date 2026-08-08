@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Runtime data
+*.db
+*.sqlite
+*.sqlite3
+uploads/
+backend/uploads/
+static/uploads/
+
+# Local configuration
+.env
+.env.*
+!.env.example
+
+# Logs and archives
+*.log
+*.tgz
+*.tar.gz
+*.zip
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

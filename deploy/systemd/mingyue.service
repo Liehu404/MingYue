@@ -1,0 +1,18 @@
+[Unit]
+Description=Mingyue Academic Exchange Platform
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/mingyue/backend
+EnvironmentFile=/etc/mingyue/backend.env
+ExecStart=/opt/mingyue/backend/venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 1
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
