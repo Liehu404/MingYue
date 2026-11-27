@@ -2,7 +2,7 @@
  *
  * - 有 token：正常已登录，清掉“本次不自动 SSO”标记。
  * - 无 token 且标记为已退出：不再自动 SSO，避免主站会话立刻把用户登回来。
- * - 点击“退出”/数据管理页退出按钮：先清 token、打标记，再兜底跳到登录页。
+ * - 点击“退出”：清学术平台 token、打退出标记，然后回到主站首页。
  * - 从主站“学术交流”入口进入时，主站链接会清除标记，恢复自动 SSO。
  */
 (function () {
@@ -20,7 +20,7 @@
     } catch (e) { }
   }
 
-  // 捕获阶段先处理退出，避免 React/原生页面把 token 又写回来。
+  // 捕获阶段接管退出：清学术态后直接回主站，避免 React 先跳到 /academic/login。
   document.addEventListener('click', function (e) {
     var el = e.target && e.target.closest
       ? e.target.closest('a,button,[role="button"]')
@@ -29,12 +29,10 @@
     var text = (el.textContent || '').trim();
     var title = el.getAttribute('title') || '';
     if (el.id === 'btnLogout' || text === '退出' || text === '退出登录' || title.indexOf('退出') >= 0) {
+      e.preventDefault();
+      e.stopPropagation();
       markLogout();
-      setTimeout(function () {
-        if (!hasToken() && location.pathname.indexOf('/academic/login') < 0) {
-          location.replace('/academic/login');
-        }
-      }, 80);
+      location.replace('/');  // 回到明月大模型主站
     }
   }, true);
 
@@ -44,6 +42,32 @@
       location.reload();
     }
   });
+
+  // 给学术平台一个随时可用的“返回主站”入口（尤其登录页）。
+  function addBackLink() {
+    try {
+      if (document.getElementById('mq-back-main')) return;
+      var a = document.createElement('a');
+      a.id = 'mq-back-main';
+      a.href = '/';
+      a.textContent = '← 返回主站';
+      a.style.cssText = [
+        'position:fixed', 'left:20px', 'bottom:20px', 'z-index:50',
+        'padding:9px 15px', 'border-radius:999px',
+        'background:rgba(104,32,128,.92)', 'color:#fff',
+        'font-size:13px', 'text-decoration:none',
+        'box-shadow:0 8px 22px rgba(74,16,99,.25)',
+        'font-family:"PingFang SC","Microsoft YaHei",sans-serif',
+        'letter-spacing:.03em',
+      ].join(';');
+      document.body.appendChild(a);
+    } catch (e) { }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', addBackLink);
+  } else {
+    addBackLink();
+  }
 
   try {
     if (hasToken()) {
