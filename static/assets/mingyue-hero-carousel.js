@@ -77,15 +77,15 @@
     /* 统一掩膜：整体压白并降饱和，中心更白保证文字 */
     'section[data-mq-hero]:has(.typography-hero-display)::after{' +
     'content:"";position:absolute;inset:0 !important;left:0 !important;right:0 !important;top:0 !important;bottom:0 !important;width:100% !important;height:100% !important;margin:0 !important;z-index:1;pointer-events:none;' +
-    'background-image:radial-gradient(ellipse at 50% 45%, rgba(255,255,255,.90) 0%, rgba(255,255,255,.80) 35%, rgba(255,255,255,.70) 65%, rgba(255,255,255,.62) 100%);' +
-    'background-color:rgba(255,255,255,.12);' +
+    'background-image:radial-gradient(ellipse 75% 55% at 50% 24%, rgba(255,255,255,.92) 0%, rgba(255,255,255,.80) 40%, rgba(255,255,255,.55) 75%, rgba(255,255,255,.32) 100%);' +
+    'background-color:rgba(255,255,255,.10);' +
     'opacity:1 !important;animation:none !important;' +
     '}' +
     /* 内容在掩膜上方 */
     'section[data-mq-hero] .tile-content{z-index:2 !important;}' +
-    /* 去掉白色方框和轨道插画 */
+    /* 去掉白色方框和轨道插画，但保留它占的高度，维持首屏大气尺寸 */
     'section[data-mq-hero] .hero-visual-wrap,' +
-    'section[data-mq-hero] .hero-ambient-orb{display:none !important;}';
+    'section[data-mq-hero] .hero-ambient-orb{visibility:hidden !important;}';
   document.head.appendChild(style);
 
   for (var i = 0; i < IMAGES.length; i++) {
