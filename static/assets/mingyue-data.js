@@ -80,6 +80,7 @@
       if (!res.ok) throw new Error(data.detail || '登录失败');
       localStorage.setItem('token', data.access_token);
       if (data.user) localStorage.setItem('user', JSON.stringify(data.user));
+      sessionStorage.removeItem('mq_sso_disabled');
       S.token = data.access_token;
       location.reload();
     } catch (e) {
@@ -89,12 +90,14 @@
 
   async function trySSO() {
     try {
+      if (sessionStorage.getItem('mq_sso_disabled')) return false;
       const res = await fetch(API + '/auth/sso', { method: 'POST' });
       if (!res.ok) return false;
       const data = await res.json();
       if (!data.access_token) return false;
       localStorage.setItem('token', data.access_token);
       if (data.user) localStorage.setItem('user', JSON.stringify(data.user));
+      sessionStorage.removeItem('mq_sso_disabled');
       S.token = data.access_token;
       return true;
     } catch (e) {
@@ -776,8 +779,10 @@
     $('#lgUser').addEventListener('keydown', e => { if (e.key === 'Enter') $('#lgPass').focus(); });
 
     $('#btnLogout').onclick = () => {
+      // 明确退出：阻止主站会话把用户自动 SSO 回来
+      sessionStorage.setItem('mq_sso_disabled', '1');
       localStorage.removeItem('token'); localStorage.removeItem('user');
-      location.href = '/academic/';
+      location.href = '/academic/login';
     };
 
     $('#tabs').addEventListener('click', e => {
