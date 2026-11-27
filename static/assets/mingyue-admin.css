@@ -1,0 +1,98 @@
+/* 明月学术交流平台 —— 管理端样式对齐（与站外公开站点统一）
+ *
+ * 背景：管理端页面大量使用 React 内联样式，字体写成 system-ui / "SF Pro Display"、
+ * 文字颜色写成 Apple 灰（#1d1d1f / #7a7a7a）。在 Linux 上 system-ui 会落到
+ * DejaVu/Liberation，与站外 Inter + Noto Sans CJK 明显不同，"管理端看起来不像同一个站"。
+ *
+ * 这里只做两件事，改动最小、可随时回滚：
+ *   1) 把管理端字体统一到站点的 --font-sans；
+ *   2) 把表格与页头文字颜色统一到站点的 --color-ink / --color-ink-muted-48。
+ * 使用 !important 是因为需要覆盖 React 的内联样式。
+ */
+
+/* ---------- 1. 字体统一 ---------- */
+.admin-shell,
+.admin-shell h1,
+.admin-shell h2,
+.admin-shell h3,
+.admin-shell h4,
+.admin-shell p,
+.admin-shell span,
+.admin-shell a,
+.admin-shell li,
+.admin-shell label,
+.admin-shell button,
+.admin-shell input,
+.admin-shell select,
+.admin-shell textarea,
+.admin-shell td,
+.admin-shell th {
+  font-family: var(--font-sans) !important;
+}
+
+/* 保留等宽场景 */
+.admin-shell pre,
+.admin-shell code,
+.admin-shell kbd,
+.admin-shell textarea.md-editor,
+.admin-shell .md-preview code,
+.admin-shell .md-preview pre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace !important;
+}
+
+/* ---------- 2. 表格排版与配色 ---------- */
+.admin-shell table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.admin-shell thead th {
+  color: var(--color-ink-muted-48) !important;
+  letter-spacing: 0.06em;
+  text-transform: none;
+}
+
+.admin-shell tbody td {
+  color: var(--color-ink) !important;
+}
+
+.admin-shell tbody tr {
+  transition: background var(--transition-fast, 0.15s ease);
+}
+
+.admin-shell tbody tr:hover {
+  background: rgba(104, 32, 128, 0.04);
+}
+
+/* ---------- 3. 页头（标题 + 副标题）配色对齐 ---------- */
+.admin-shell .admin-shell-content h1 {
+  color: var(--color-ink) !important;
+}
+
+.admin-shell .admin-shell-content h1 + p,
+.admin-shell .admin-shell-content > div > div > h1 + p {
+  color: var(--color-ink-muted-48) !important;
+}
+
+/* ---------- 4. 玻璃卡片与站外保持一致的圆角/描边 ---------- */
+.admin-shell .glass-card {
+  border-radius: var(--radius-lg, 18px) !important;
+  border: 1px solid rgba(104, 32, 128, 0.08) !important;
+}
+
+/* ---------- 5. 窄屏：表格允许横向滚动而不是撑破布局 ---------- */
+@media (max-width: 900px) {
+  .admin-shell .glass-card {
+    overflow-x: auto;
+  }
+
+  .admin-shell .admin-shell-topbar {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .admin-shell .admin-shell-links {
+    order: 3;
+    flex-basis: 100%;
+  }
+}

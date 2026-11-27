@@ -1,0 +1,85 @@
+/* ============================================================
+   明月学术 · 界面修复与统一字体（mingyue-refine.css）2026-09-10
+   1) 修复资源卡片停在 opacity:0（不可见但仍可点击）的渲染 bug
+   2) 标题统一改用正常无衬线字体（去掉行书/毛笔花体）
+   3) 文档类资源的「文字预览」样式
+   ============================================================ */
+
+/* ---------- 1) 卡片不可见 bug ----------
+   framer-motion 的入场动画在部分页面未能推进，元素被卡在
+   inline style="opacity:0;transform:translateY(20px)"，导致卡片占位但看不见。
+   这里让这类容器始终保持可见。 */
+.store-utility-grid > div[style*="opacity: 0"] {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* ---------- 2) 标题字体：花体 → 正常字体 ----------
+   原设计中 --font-kai（毛笔楷书）与 --font-brush（行书花体）用于各类标题；
+   按需求统一改为与正文一致的无衬线字体。 */
+:root {
+  --font-kai: var(--font-sans);
+  --font-brush: var(--font-sans);
+}
+.typography-hero-display,
+.typography-display-lg,
+.typography-display,
+.sub-nav-title,
+.auth-shell-title,
+.global-brand-title,
+.mingyue-literary-brand {
+  font-family: var(--font-sans) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0 !important;
+}
+
+/* ---------- 3) 文档类资源卡片的「文字预览」 ---------- */
+.resource-card-media.mq-docprev {
+  background: #fbfaf7 !important;
+  background-image: none !important;
+  display: block !important;
+  padding: 0 !important;
+  text-align: left !important;
+}
+.mq-docprev-inner {
+  position: relative;
+  box-sizing: border-box;
+  height: 100%;
+  padding: 13px 16px 13px 19px;
+  overflow: hidden;
+}
+.mq-docprev-inner::before {
+  content: "";
+  position: absolute;
+  left: 9px;
+  top: 14px;
+  bottom: 16px;
+  width: 3px;
+  border-radius: 3px;
+  background: var(--color-primary);
+  opacity: .5;
+}
+.mq-docprev-meta {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  margin-bottom: 6px;
+}
+.mq-docprev-text {
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--color-ink-muted-80);
+  overflow: hidden;
+  max-height: 112px;
+  word-break: break-word;
+}
+.mq-docprev-inner::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 30px;
+  background: linear-gradient(180deg, rgba(251, 250, 247, 0), #fbfaf7 78%);
+  pointer-events: none;
+}

@@ -68,10 +68,11 @@ function ProtectedRoute({ children, requireAdmin }: { children: ReactNode; requi
 }
 
 export default function App() {
+  const routerBase = import.meta.env.BASE_URL.replace(/\/$/, '') || undefined;
   return (
     <ErrorBoundary>
       <AuthProvider>
-        <BrowserRouter>
+        <BrowserRouter basename={routerBase}>
           <Routes>
             {/* Auth routes */}
             <Route element={<AuthLayout />}>

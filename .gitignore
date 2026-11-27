@@ -23,6 +23,9 @@ frontend/*.tsbuildinfo
 uploads/
 backend/uploads/
 static/uploads/
+data_import/
+*.bak-*
+frontend/vite.config.d.ts
 
 # Local configuration
 .env

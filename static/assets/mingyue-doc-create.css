@@ -1,0 +1,54 @@
+/* ===== 明月学术 · 在线写文档（浮标 + 新建弹窗）===== */
+.mq-fab {
+  position: fixed;
+  right: 22px;
+  bottom: 26px;
+  z-index: 9000;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #6d5efc, #9b6bff);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 10px 26px rgba(109, 94, 252, 0.35);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.mq-fab:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(109, 94, 252, 0.45); }
+
+.mq-createmask {
+  position: fixed; inset: 0; z-index: 9500;
+  background: rgba(20, 18, 40, .45);
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(2px);
+}
+.mq-createcard {
+  width: min(460px, 92vw);
+  background: #fff;
+  border-radius: 16px;
+  padding: 22px 24px 18px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .28);
+  font-family: inherit;
+}
+.mq-createcard h3 { margin: 0 0 4px; font-size: 18px; color: #1a1730; }
+.mq-createcard .mq-sub { margin: 0 0 16px; font-size: 13px; color: #7c7899; }
+.mq-field { margin-bottom: 12px; }
+.mq-field label { display: block; font-size: 13px; color: #4a4666; margin-bottom: 6px; }
+.mq-field input, .mq-field select {
+  width: 100%; box-sizing: border-box;
+  padding: 9px 11px; border: 1px solid #ddd8f0; border-radius: 9px;
+  font-size: 14px; outline: none; background: #fbfaff; color: #1a1730;
+}
+.mq-field input:focus, .mq-field select:focus { border-color: #9b6bff; background: #fff; }
+.mq-create-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
+.mq-create-actions button {
+  padding: 9px 18px; border-radius: 9px; font-size: 14px; cursor: pointer; border: 1px solid transparent;
+}
+.mq-cancel { background: #f2f0fa; color: #4a4666; border-color: #e4e0f5; }
+.mq-ok { background: #6d5efc; color: #fff; }
+.mq-ok:hover { background: #5b4df0; }
+.mq-err { color: #cf1322; font-size: 13px; min-height: 18px; margin-top: 2px; }

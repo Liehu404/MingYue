@@ -26,4 +26,5 @@ export const authApi = {
   sendCode: (phone: string, purpose = 'register') =>
     client.post('/auth/send-code', { phone, purpose }),
   me: () => client.get('/auth/me'),
+  sso: () => client.post('/auth/sso'),
 };

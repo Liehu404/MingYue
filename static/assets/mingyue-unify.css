@@ -1,0 +1,123 @@
+/* 明月学术交流平台 —— 全站风格统一补充层（管理端 + 资源广场）
+ * ------------------------------------------------------------------
+ * 目的：把管理端与资源广场中残留的「非站点字体 / 配色」统一到设计系统。
+ *
+ * 实测审计发现的残留（Chrome 计算样式）：
+ *   1) 基础样式 index-*.css 里 `h1..h6` 使用 "SF Pro Display"，Linux 上没有该字体
+ *      → 回退成 DejaVu，导致资源广场卡片标题 `h3.text-shadow-card` 等与正文字体不一致；
+ *   2) 管理端 `table / thead / tbody / tr` 仍带 `system-ui`；
+ *   3) 管理端少量文字使用 Apple 灰 #1d1d1f / #7a7a7a / rgb(110,110,115)。
+ *
+ * 处理：
+ *   - 标题统一到与站内正文一致的 UI 无衬线字栈（--font-ui）；
+ *   - 管理端字体全量统一（排除代码/图标/公式）；
+ *   - 管理端 Apple 灰统一到站点墨色 token --color-ink / --color-ink-muted-48。
+ *
+ * 本文件为新增独立文件，在 index.html 中最后加载，可整文件回滚。
+ * 说明：带 class 的书法/衬线标题（如 .global-brand-title 用 var(--font-serif)）
+ *      优先级更高，不会被本文件的元素选择器影响。
+ */
+
+:root {
+  --font-ui: Inter, "Segoe UI Variable Text", "Segoe UI", "PingFang SC",
+             "Microsoft YaHei", "Noto Sans CJK SC", system-ui, -apple-system, sans-serif;
+}
+
+/* ---------- 1) 全站标题：与正文统一 ---------- */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-ui);
+}
+
+/* 资源广场卡片标题等带「内联 font-family」的元素：需要 !important 覆盖内联样式 */
+.text-shadow-card,
+.resource-card h3,
+.store-utility-card h3,
+[style*="SF Pro Display"],
+[style*="SF Pro Text"] {
+  font-family: var(--font-ui) !important;
+}
+
+/* ---------- 2) 管理端：字体全量统一（排除代码 / 图标 / 公式） ---------- */
+.admin-shell,
+.admin-shell *:not(pre):not(code):not(kbd):not(svg):not(i) {
+  font-family: var(--font-ui) !important;
+}
+
+/* 代码等宽场景保持 */
+.admin-shell pre,
+.admin-shell code,
+.admin-shell kbd,
+.admin-shell textarea,
+.admin-shell .md-preview code,
+.admin-shell .md-preview pre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace !important;
+}
+
+/* ---------- 3) 管理端：Apple 灰 → 站点墨色 ---------- */
+.admin-shell [style*="rgb(29, 29, 31)"],
+.admin-shell [style*="#1d1d1f"] {
+  color: var(--color-ink) !important;
+}
+.admin-shell [style*="rgb(122, 122, 122)"],
+.admin-shell [style*="rgb(110, 110, 115)"],
+.admin-shell [style*="#7a7a7a"] {
+  color: var(--color-ink-muted-48) !important;
+}
+
+/* ---------- 4) 管理端控件一致性 ---------- */
+.admin-shell button {
+  transition: color .15s ease, background .15s ease, border-color .15s ease;
+}
+
+/* ---------- 5) 管理端背景：深紫铺满整页（分界推到页尾） ----------
+ * 原设计：
+ *   .admin-shell{background:...,linear-gradient(180deg,#150b24,#1a0e2b 45%,#f1ecf7 45%,#f1ecf7)}
+ * 深色区是「45% 百分比硬切」，会在页面中部（且随页面高度变化）留下
+ * 一道明显的紫→白分界线，两段比例还随页面长短失控。
+ *
+ * 需求（老大 20:02）：把分界线下移到页尾 —— 即深紫铺满整页，分界只在页面最底部。
+ * 实现：整页背景统一为深紫（html/body + .admin-shell 全高），
+ *      分界线被推到页面末尾，内容区不再出现明显的紫白割裂。
+ */
+html:has(.admin-shell),
+body:has(.admin-shell) {
+  background-color: #150b24 !important;
+}
+
+.admin-shell {
+  background-color: transparent !important;
+  background-image:
+    radial-gradient(circle at 20% 18%, rgba(104, 32, 128, .16), transparent 28%),
+    radial-gradient(circle at 82% 86%, rgba(168, 85, 247, .12), transparent 26%),
+    linear-gradient(180deg, #150b24 0%, #1a0e2b 100%) !important;
+  background-repeat: no-repeat !important;
+  background-size: auto, auto, 100% 100% !important;
+  background-position: 0 0, 0 0, 0 0 !important;
+  background-attachment: scroll !important;
+}
+
+/* ---------- 6) 管理端：深色底上的文字提亮 ----------
+ * 页面底色改为整页深紫后，原本「深色文字 + 深色底」的元素会看不清。
+ * 线索：设计稿里头部副标题本就是浅紫 rgba(230,218,241,.72) —— 说明头部是深色底；
+ *      但多数页面把标题/标签页写成了 Apple 近黑 #1d1d1f / #7a7a7a，在深色底上不可见。
+ * 这里只提亮「直接压在深色底上的」头部标题、标签切换器与空状态文案，
+ * 卡片内部（白底）文字不受影响。
+ */
+.admin-shell .admin-shell-content h1 {
+  color: #f7f3fc !important;
+}
+.admin-shell .admin-shell-content h1 + p,
+.admin-shell .admin-shell-content h1 ~ p {
+  color: rgba(230, 218, 241, .72) !important;
+}
+/* 标签页切换器（直接位于深色页面底色上） */
+.admin-shell [style*="border-bottom: 2px solid rgb(224, 224, 224)"] button {
+  color: #cabde4 !important;
+}
+.admin-shell button[style*="border-bottom: 2px solid rgb(104, 32, 128)"] {
+  color: #ffffff !important;
+}
+/* 空状态文案 */
+.admin-shell [style*="text-align: center; padding: 60px 0px"] p {
+  color: #b7a7d4 !important;
+}

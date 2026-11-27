@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import client from '../../api/client';
+import { normalizeFilePath } from '../../utils/path';
 
 interface UploadedImage {
   id: string;
@@ -72,12 +73,8 @@ export default function ImageManagementPage() {
       });
       let raw = res.data?.url || res.data?.file_path || res.data?.path || (typeof res.data === 'string' ? res.data : '');
       if (!raw) throw new Error('服务器未返回图片地址');
-      // Normalize URL: backend returns "temp/xxx.jpg", nginx serves at /uploads/
-      raw = String(raw);
-      if (!raw.startsWith('http') && !raw.startsWith('/')) {
-        raw = '/uploads/' + raw;
-      }
-      const url = raw;
+      // Normalize URL: backend returns "temp/xxx.jpg", nginx serves at {BASE}uploads/
+      const url = normalizeFilePath(String(raw));
       const img: UploadedImage = {
         id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
         url: String(url),

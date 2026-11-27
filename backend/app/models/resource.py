@@ -42,6 +42,7 @@ class MediaResource(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     title = Column(String(300), nullable=False)
     description = Column(Text, default="")
+    content = Column(Text, default="")
     resource_type = Column(Enum(ResourceType), nullable=False)
     file_path = Column(String(500), nullable=True)
     file_size = Column(BigInteger, default=0)
@@ -65,6 +66,30 @@ class MediaResource(Base):
     reports = relationship("Report", back_populates="resource", cascade="all, delete-orphan")
     comments = relationship("Comment", back_populates="resource", cascade="all, delete-orphan")
     images = relationship("ResourceImage", back_populates="resource", cascade="all, delete-orphan")
+    attachments = relationship(
+        "ResourceAttachment",
+        back_populates="resource",
+        cascade="all, delete-orphan",
+        order_by="ResourceAttachment.sort_order",
+    )
+
+
+class ResourceAttachment(Base):
+    """资源的附件：链接(link) 或 文件(file)。资源主体为「正文文字」，
+    链接/文件只能作为附件挂载，不允许单独成资源。"""
+    __tablename__ = "resource_attachments"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    resource_id = Column(Integer, ForeignKey("media_resources.id", ondelete="CASCADE"), nullable=False)
+    kind = Column(String(12), nullable=False, default="link")   # link | file
+    name = Column(String(300), default="")
+    url = Column(String(2000), nullable=True)
+    file_path = Column(String(500), nullable=True)
+    file_size = Column(BigInteger, default=0)
+    sort_order = Column(Integer, nullable=False, default=0)
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+    resource = relationship("MediaResource", back_populates="attachments")
 
 
 class ResourceImage(Base):

@@ -77,6 +77,10 @@ async def get_user(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
+    # 仅本人或超管可查看他人资料（含邮箱/手机号等 PII）
+    if current_user.id != user_id and current_user.role.value != "super_admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="无权查看该用户信息")
+
     result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalar_one_or_none()
     if not user:

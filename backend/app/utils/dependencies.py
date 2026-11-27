@@ -7,13 +7,17 @@ from app.database import get_db
 from app.models import User
 from app.utils.security import decode_access_token
 
-security_scheme = HTTPBearer()
+# auto_error=False：缺 token 时返回 401 而不是 FastAPI 默认的 403，
+# 这样前端的“401 后尝试 SSO”逻辑才能统一触发。
+security_scheme = HTTPBearer(auto_error=False)
 
 
 async def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security_scheme),
+    credentials: HTTPAuthorizationCredentials | None = Depends(security_scheme),
     db: AsyncSession = Depends(get_db),
 ) -> User:
+    if credentials is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="未登录")
     payload = decode_access_token(credentials.credentials)
     if payload is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")

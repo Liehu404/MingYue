@@ -248,7 +248,7 @@ export default function ProfilePage() {
                           className="typography-body"
                           style={{ cursor: 'pointer' }}
                           onClick={() => {
-                            window.location.href = `/teams/${t.team_id}`;
+                            window.location.href = `${import.meta.env.BASE_URL}teams/${t.team_id}`;
                           }}
                         >
                           战队 #{t.team_id}

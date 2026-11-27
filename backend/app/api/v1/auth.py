@@ -1,14 +1,17 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+import httpx
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.config import settings
 from app.database import get_db
 from app.models import User
-from app.schemas.auth import RegisterRequest, LoginRequest, SendCodeRequest, TokenResponse, UserResponse
+from app.schemas.auth import RegisterRequest, LoginRequest, SendCodeRequest, TokenResponse, UserResponse, MeResponse, ChangePasswordRequest
 from app.services.auth_service import (
     register_user, authenticate, authenticate_by_phone, get_user_profile,
-    send_verification_code,
+    send_verification_code, sso_login, SSOConflictError, SSOInactiveError,
 )
 from app.utils.dependencies import get_current_user
+from app.utils.security import hash_password, verify_password
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -74,6 +77,67 @@ async def login(data: LoginRequest, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=msg)
 
 
-@router.get("/me", response_model=UserResponse)
+@router.post("/sso")
+async def sso(request: Request, db: AsyncSession = Depends(get_db)):
+    """用主站 Flask session 单点登录学术平台。
+
+    浏览器与主站同域，请求会带上主站 session cookie；本接口只把 Cookie
+    转发给同机主站的 /get_session，不保存、不记录 Cookie。
+    """
+    if not settings.SSO_ENABLED:
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="单点登录暂时关闭")
+
+    cookie = request.headers.get("cookie")
+    if not cookie:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={"message": "未登录主站", "login_url": "/login"},
+        )
+
+    try:
+        async with httpx.AsyncClient(timeout=5, trust_env=False) as client:
+            resp = await client.get(settings.MODEL_SESSION_URL, headers={"Cookie": cookie})
+        session = resp.json() if resp.status_code == 200 else {}
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail="主站会话服务不可用")
+
+    username = session.get("username") if isinstance(session, dict) else None
+    if not username:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={"message": "未登录主站", "login_url": "/login"},
+        )
+
+    try:
+        return await sso_login(
+            db,
+            username=str(username),
+            role=str(session.get("role") or "student"),
+            sis_id=str(session.get("sis_id") or ""),
+        )
+    except SSOConflictError as e:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
+    except SSOInactiveError as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+
+
+@router.get("/me", response_model=MeResponse)
 async def get_me(current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
     return await get_user_profile(db, current_user)
+
+
+@router.post("/change-password")
+async def change_password(
+    data: ChangePasswordRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """修改当前用户密码（前端个人中心使用）。"""
+    if not verify_password(data.current_password, current_user.password_hash):
+        raise HTTPException(status_code=400, detail="当前密码不正确")
+    if len(data.new_password or "") < 6:
+        raise HTTPException(status_code=400, detail="新密码长度不能少于6位")
+    current_user.password_hash = hash_password(data.new_password)
+    db.add(current_user)
+    await db.commit()
+    return {"message": "密码修改成功"}

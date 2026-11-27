@@ -203,7 +203,7 @@ export default function TeamOverviewPage() {
                       (e.currentTarget as HTMLElement).style.transform = 'none';
                     }}
                     onClick={() => {
-                      window.location.href = `/teams/${team.team_id}`;
+                      window.location.href = `${import.meta.env.BASE_URL}teams/${team.team_id}`;
                     }}
                   >
                     {/* Accent bar */}

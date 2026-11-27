@@ -2,12 +2,12 @@
   position: relative;
   z-index: 1;
   padding: 48px 28px 42px;
-  color: rgba(226, 232, 240, .78);
+  color: rgba(230,222,240, .78);
   background:
-    linear-gradient(135deg, rgba(79, 140, 255, .14), transparent 36%),
-    linear-gradient(230deg, rgba(34, 211, 238, .1), transparent 34%),
-    #07111e;
-  border-top: 1px solid rgba(148, 163, 184, .16);
+    linear-gradient(135deg, rgba(104,32,128, .14), transparent 36%),
+    linear-gradient(230deg, rgba(168,85,247, .1), transparent 34%),
+    #150b24;
+  border-top: 1px solid rgba(160,143,192, .16);
 }
 
 .mingyue-literary-footer-inner {
@@ -36,8 +36,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #4f8cff, #22d3ee);
-  box-shadow: 0 12px 28px rgba(79, 140, 255, .32);
+  background: linear-gradient(135deg, #682080, #a855f7);
+  box-shadow: 0 12px 28px rgba(104,32,128, .32);
   color: #ffffff;
   font-size: 14px;
 }
@@ -45,7 +45,7 @@
 .mingyue-literary-verse {
   max-width: 520px;
   margin: 0;
-  color: rgba(226, 232, 240, .72);
+  color: rgba(230,222,240, .72);
   font-size: 15px;
   line-height: 1.8;
 }
@@ -64,7 +64,7 @@
   margin: 0;
   padding: 0;
   list-style: none;
-  color: rgba(226, 232, 240, .66);
+  color: rgba(230,222,240, .66);
   font-size: 13px;
   line-height: 1.55;
 }
@@ -73,30 +73,30 @@
   width: min(1120px, 100%);
   margin: 34px auto 0;
   padding-top: 18px;
-  border-top: 1px solid rgba(148, 163, 184, .14);
+  border-top: 1px solid rgba(160,143,192, .14);
   display: flex;
   justify-content: space-between;
   gap: 16px;
-  color: rgba(226, 232, 240, .52);
+  color: rgba(230,222,240, .52);
   font-size: 12px;
 }
 
 section:has(.typography-hero-display) {
   background:
-    radial-gradient(circle at 18% 24%, rgba(79, 140, 255, .22), transparent 34%),
-    radial-gradient(circle at 80% 18%, rgba(34, 211, 238, .16), transparent 32%),
-    linear-gradient(180deg, #07111e 0%, #0f172a 58%, #111827 100%) !important;
-  color: #ffffff !important;
+    radial-gradient(circle at 18% 24%, rgba(104,32,128, .12), transparent 34%),
+    radial-gradient(circle at 80% 18%, rgba(168,85,247, .09), transparent 32%),
+    #ffffff !important;
+  color: #170c26 !important;
   padding-top: 86px !important;
   padding-bottom: 62px !important;
 }
 
 #root > div > section:first-of-type {
   background:
-    radial-gradient(circle at 18% 24%, rgba(79, 140, 255, .22), transparent 34%),
-    radial-gradient(circle at 80% 18%, rgba(34, 211, 238, .16), transparent 32%),
-    linear-gradient(180deg, #07111e 0%, #0f172a 58%, #111827 100%) !important;
-  color: #ffffff !important;
+    radial-gradient(circle at 18% 24%, rgba(104,32,128, .12), transparent 34%),
+    radial-gradient(circle at 80% 18%, rgba(168,85,247, .09), transparent 32%),
+    #ffffff !important;
+  color: #170c26 !important;
 }
 
 #root > div > section:first-of-type .tile-content,
@@ -105,32 +105,32 @@ section:has(.typography-hero-display) {
 }
 
 #root > div > section:first-of-type .typography-hero-display {
-  color: #ffffff !important;
+  color: #241036 !important;
 }
 
 #root > div > section:first-of-type .typography-hero-display + p {
-  color: rgba(226, 232, 240, .82) !important;
+  color: rgba(52,36,70,.78) !important;
 }
 
 section:has(.typography-hero-display) .text-glow-subtle {
   background: none !important;
   -webkit-text-fill-color: initial !important;
-  color: #9cc7ff !important;
+  color: #682080 !important;
   text-shadow: none !important;
 }
 
 section:has(.typography-hero-display) .typography-hero-display {
-  color: #ffffff !important;
-  text-shadow: 0 10px 34px rgba(0, 0, 0, .28) !important;
+  color: #241036 !important;
+  text-shadow: 0 14px 44px rgba(104,32,128,.16) !important;
 }
 
 section:has(.typography-hero-display) .typography-hero-display + p,
 section:has(.typography-hero-display) p {
-  color: rgba(226, 232, 240, .78) !important;
+  color: rgba(52,36,70,.78) !important;
 }
 
 section:has(.typography-hero-display) .bg-dots {
-  opacity: .38;
+  opacity: .75;
 }
 
 @media (max-width: 820px) {

@@ -936,7 +936,7 @@ export default function TeamDetailPage() {
                           (e.currentTarget as HTMLElement).style.transform = 'none';
                         }}
                         onClick={() => {
-                          window.location.href = `/resources/${r.id}`;
+                          window.location.href = `${import.meta.env.BASE_URL}resources/${r.id}`;
                         }}
                       >
                         <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--color-primary)', marginBottom: '8px', textTransform: 'uppercase' }}>

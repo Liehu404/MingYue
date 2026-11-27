@@ -5,7 +5,7 @@
     footer.innerHTML = [
       '<div class="mingyue-literary-footer-inner">',
       '  <section>',
-      '    <div class="mingyue-literary-brand"><span class="mingyue-literary-mark">M</span><span>明月学术</span></div>',
+      '    <div class="mingyue-literary-brand"><span class="mingyue-literary-mark"><img src="/academic/assets/emblem-mark.png" alt="" class="mingyue-literary-mark-img"/></span><span>明月学术</span></div>',
       '    <p class="mingyue-literary-verse">纸上得来终觉浅 行而知之始见真 这里收束资料、团队与项目，也给每一次认真求索留下一点清晰的痕迹</p>',
       '  </section>',
       '  <section>',

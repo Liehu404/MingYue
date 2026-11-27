@@ -1,19 +1,59 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-CN">
 
 <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/png" href="/academic/assets/emblem-mark.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>鏄庢湀瀛︽湳</title>
-  <script type="module" crossorigin src="/assets/index-mingyue-refined.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-B43BuOV6.css">
-  <link rel="stylesheet" crossorigin href="/assets/mingyue-responsive-v20260724c.css">
-  <script defer src="/assets/mingyue-literary.js"></script>
+    <title>明月学术交流平台（MY RESEARCH OS）</title>
+  <!-- 登录态同步：先于 React 执行，拦截 localStorage token 变化 -->
+  <script src="/academic/assets/mingyue-auth-sync.js?v=20260910"></script>
+  <script src="/academic/assets/mingyue-site-config.js?v=20260910"></script>
+  <script src="/academic/assets/mingyue-sso-boot.js"></script>
+  <script type="module" crossorigin src="/academic/assets/index-mingyue-refined.js"></script>
+  <link rel="stylesheet" crossorigin href="/academic/assets/index-B43BuOV6.css">
+  <link rel="stylesheet" crossorigin href="/academic/assets/mingyue-responsive-v20260724c.css">
+  <link rel="stylesheet" crossorigin href="/academic/assets/mingyue-design-purple.css">
+  <link rel="stylesheet" href="/academic/assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="/academic/assets/mingyue-doc.css?v=20260915">
+  <link rel="stylesheet" href="/academic/assets/mingyue-doc-create.css?v=20260910">
+  <link rel="stylesheet" href="/academic/assets/mingyue-refine.css?v=20260910e">
+  <link rel="stylesheet" href="/academic/assets/mingyue-admin.css?v=20260910">
+<link rel="stylesheet" href="/academic/assets/mingyue-unify.css?v=20260911b">
+  <script defer src="/academic/assets/mingyue-literary.js?v=20260910"></script>
 </head>
 
 <body>
     <div id="root"></div>
+    <script defer src="/academic/assets/vendor/purify.min.js"></script>
+    <script defer src="/academic/assets/vendor/marked.min.js"></script>
+    <script defer src="/academic/assets/vendor/katex.min.js"></script>
+    <script defer src="/academic/assets/vendor/auto-render.min.js"></script>
+    <script defer src="/academic/assets/mingyue-doc-viewer.js?v=20260915"></script>
+    <script defer src="/academic/assets/mingyue-post-panel.js?v=20260915"></script>
+    <script defer src="/academic/assets/mingyue-doc-create.js?v=20260910"></script>
+    <script defer src="/academic/assets/mingyue-refine.js?v=20260915"></script>
+    <!-- 数据管理入口（仅教职工/管理角色可见，2026-11） -->
+    <style>
+      #mq-data-entry{position:fixed;right:22px;bottom:22px;z-index:30;display:none;align-items:center;gap:7px;
+        background:#682080;color:#fff;font-size:13px;padding:11px 18px;border-radius:999px;
+        text-decoration:none;box-shadow:0 10px 26px rgba(74,16,99,.32);letter-spacing:.04em;
+        font-family:"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif;transition:.2s}
+      #mq-data-entry:hover{background:#4a1063;transform:translateY(-2px)}
+      #mq-data-entry::before{content:"◈";font-size:14px;opacity:.9}
+      @media(max-width:860px){#mq-data-entry{right:14px;bottom:14px;padding:9px 15px;font-size:12px}}
+    </style>
+    <a id="mq-data-entry" href="/academic/data.html">数据管理</a>
+    <script>
+      (function () {
+        try {
+          var u = {};
+          try { u = JSON.parse(localStorage.getItem('user') || '{}') || {}; } catch (e) {}
+          var role = u.role || '';
+          if (role && role !== 'student') document.getElementById('mq-data-entry').style.display = 'inline-flex';
+        } catch (e) {}
+      })();
+    </script>
 </body>
 
 </html>

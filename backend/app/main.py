@@ -13,19 +13,14 @@ from app.utils.security import hash_password
 
 
 async def seed_super_admin():
-    if not settings.SEED_SUPER_ADMIN:
-        return
-    if settings.SUPER_ADMIN_PASSWORD in {"", "admin123", "password", "123456"}:
-        raise RuntimeError("SUPER_ADMIN_PASSWORD must be set to a strong value before seeding")
-
     async with async_session() as db:
         result = await db.execute(select(User).where(User.role == UserRole.super_admin))
         if result.scalar_one_or_none() is None:
             admin = User(
-                username=settings.SUPER_ADMIN_USERNAME,
-                email=settings.SUPER_ADMIN_EMAIL,
-                password_hash=hash_password(settings.SUPER_ADMIN_PASSWORD),
-                display_name=settings.SUPER_ADMIN_DISPLAY_NAME,
+                username="admin",
+                email="admin@mingyue.com",
+                password_hash=hash_password("admin123"),
+                display_name="超级管理员",
                 role=UserRole.super_admin,
             )
             db.add(admin)
@@ -36,7 +31,20 @@ async def seed_super_admin():
 async def lifespan(app: FastAPI):
     await init_db()
     await seed_super_admin()
-    yield
+
+    # 数据管理：数据源自动同步调度器（可通过 KB_SCHEDULER_ENABLED 关闭）
+    import asyncio
+    stop_event = asyncio.Event()
+    scheduler_task = None
+    if settings.KB_SCHEDULER_ENABLED:
+        from app.services.kb_scheduler import scheduler_loop
+        scheduler_task = asyncio.create_task(scheduler_loop(stop_event))
+    try:
+        yield
+    finally:
+        stop_event.set()
+        if scheduler_task is not None:
+            scheduler_task.cancel()
 
 
 app = FastAPI(title="明月学术交流平台", version="0.1.0", lifespan=lifespan)

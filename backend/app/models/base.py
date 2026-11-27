@@ -140,6 +140,15 @@ class TeamJoinRequest(Base):
     reviewer = relationship("User", foreign_keys=[reviewed_by])
 
 
+class SiteConfig(Base):
+    """站点级键值配置（如各页面背景配图），供管理端写入、全站读取。"""
+    __tablename__ = "site_configs"
+
+    key = Column(String(64), primary_key=True)
+    value = Column(Text, nullable=False, default="")
+    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
 class VerificationCode(Base):
     __tablename__ = "verification_codes"
 

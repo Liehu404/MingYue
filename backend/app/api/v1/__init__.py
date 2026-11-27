@@ -7,6 +7,8 @@ from app.api.v1.users import router as users_router
 from app.api.v1.resources import router as resources_router
 from app.api.v1.reviews import router as reviews_router
 from app.api.v1.stats import router as stats_router
+from app.api.v1.site_config import router as site_config_router
+from app.api.v1.kb import router as kb_router
 
 router = APIRouter(prefix="/api/v1")
 router.include_router(auth_router)
@@ -17,3 +19,5 @@ router.include_router(users_router)
 router.include_router(resources_router)
 router.include_router(reviews_router)
 router.include_router(stats_router)
+router.include_router(site_config_router)
+router.include_router(kb_router)

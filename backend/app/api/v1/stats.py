@@ -32,6 +32,11 @@ async def overview(
         "team_count": team_count,
         "resource_count": resource_count,
         "pending_count": pending_count,
+        # 兼容管理端仪表盘使用的字段名
+        "total_users": user_count,
+        "total_teams": team_count,
+        "total_resources": resource_count,
+        "pending_resources": pending_count,
     }
 
 

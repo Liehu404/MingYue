@@ -180,6 +180,28 @@ async def create_team(
     }
 
 
+@router.get("/my-requests")
+async def my_join_requests(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    result = await db.execute(
+        select(TeamJoinRequest).where(
+            TeamJoinRequest.user_id == current_user.id,
+        ).order_by(TeamJoinRequest.created_at.desc())
+    )
+    requests = result.scalars().all()
+    return [
+        {
+            "id": r.id, "team_id": r.team_id, "user_id": r.user_id,
+            "message": r.message, "status": r.status,
+            "created_at": r.created_at.isoformat() if r.created_at else None,
+            "reviewed_at": r.reviewed_at.isoformat() if r.reviewed_at else None,
+        }
+        for r in requests
+    ]
+
+
 @router.get("/{team_id}")
 async def get_team(team_id: int, db: AsyncSession = Depends(get_db)):
     team = await _get_team_or_404(db, team_id)
@@ -618,7 +640,7 @@ async def list_join_requests(
         select(TeamJoinRequest).where(
             TeamJoinRequest.team_id == team_id,
             TeamJoinRequest.status == "pending",
-        ).order_by(TeamJoinRequest.created_at.desc())
+        ).options(selectinload(TeamJoinRequest.user)).order_by(TeamJoinRequest.created_at.desc())
     )
     requests = result.scalars().all()
     return [
@@ -663,7 +685,7 @@ async def review_join_request(
             TeamJoinRequest.id == request_id,
             TeamJoinRequest.team_id == team_id,
             TeamJoinRequest.status == "pending",
-        )
+        ).options(selectinload(TeamJoinRequest.user))
     )
     join_req = result.scalar_one_or_none()
     if not join_req:
@@ -695,25 +717,3 @@ async def review_join_request(
 
     await db.commit()
     return {"message": f"已{decision == 'approved' and '通过' or '拒绝'}申请"}
-
-
-@router.get("/my-requests")
-async def my_join_requests(
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db),
-):
-    result = await db.execute(
-        select(TeamJoinRequest).where(
-            TeamJoinRequest.user_id == current_user.id,
-        ).order_by(TeamJoinRequest.created_at.desc())
-    )
-    requests = result.scalars().all()
-    return [
-        {
-            "id": r.id, "team_id": r.team_id, "user_id": r.user_id,
-            "message": r.message, "status": r.status,
-            "created_at": r.created_at.isoformat() if r.created_at else None,
-            "reviewed_at": r.reviewed_at.isoformat() if r.reviewed_at else None,
-        }
-        for r in requests
-    ]

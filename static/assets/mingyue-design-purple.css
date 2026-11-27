@@ -1,0 +1,269 @@
+/* ============================================================
+   明月学术 · 院徽紫白设计系统 v2.1（纯色 · 衬线标题 · 斑点 · 轻动效）
+   emblem #682080 / 纯紫就是紫 · 纯白就是白 — 2026-09-08
+   ============================================================ */
+
+/* 开源毛笔/行书标题字体（OFL，自托管）：马善政毛笔楷书 + 智芒行书 */
+@font-face{font-family:"MaShanZheng";src:url("/academic/assets/fonts/MaShanZheng-Regular.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"ZhiMangXing";src:url("/academic/assets/fonts/ZhiMangXing-Regular.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap}
+
+:root{
+  --emblem:#682080;
+  --emblem-deep:#4a1063;
+  --emblem-bright:#a855f7;
+  --emblem-soft:#c39ff0;
+  --emblem-mist:#f3ecfb;
+  --color-primary:#682080;
+  --color-primary-focus:#8f52c9;
+  --color-primary-on-dark:#c39ff0;
+  --color-canvas:#ffffff;
+  --color-parchment:#f6f1fa;
+  --color-surface-pearl:#fbf8fe;
+  --color-ink:#241036;
+  --color-ink-muted-80:#43305a;
+  --color-ink-muted-48:#8a76a6;
+  --color-hairline:rgba(104,32,128,.14);
+  --color-divider-soft:rgba(104,32,128,.07);
+  --font-serif:"Noto Serif CJK SC","Source Han Serif SC","Source Han Serif CN","Songti SC","STSong","SimSun",serif;
+  --font-kai:"MaShanZheng","ZhiMangXing","Noto Serif CJK SC","Songti SC","SimSun",serif; /* 毛笔楷书（标题） */
+  --font-brush:"ZhiMangXing","MaShanZheng","Noto Serif CJK SC","Songti SC","SimSun",serif; /* 行书花体（最大标题） */
+  --font-sans:"Noto Sans CJK SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;
+}
+
+/* ---------- 基础质感（纯色） ---------- */
+::selection{background:rgba(168,85,247,.28);color:#170c26}
+html{scrollbar-color:#682080 #f1ecf7;scrollbar-width:thin}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:#f6f1fa}
+::-webkit-scrollbar-thumb{background:#682080;border-radius:99px;border:2px solid #f6f1fa}
+body{background:#ffffff}
+
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid #a855f7;outline-offset:2px;border-radius:6px}
+
+/* ============ 动效（尊重减弱动效设置；无渐变、只做位移/透明度/呼吸） ============ */
+@keyframes speckleDrift{from{background-position:0 0,0 0}to{background-position:84px 56px,42px 28px}}
+@keyframes softFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes emblemBreathe{0%,100%{opacity:.05;transform:scale(1) rotate(0deg)}50%{opacity:.08;transform:scale(1.04) rotate(1deg)}}
+@keyframes cardHover{to{transform:translateY(-4px)}}
+
+/* ---------- 顶部导航：纯紫 #682080 · 白色反色院徽 ---------- */
+.global-nav{
+  height:74px!important;
+  background:#682080!important;
+  border-bottom:1px solid rgba(255,255,255,.14)!important;
+  box-shadow:0 12px 30px -18px rgba(74,16,99,.45)!important;
+}
+@media (max-width:820px){.global-nav{height:auto!important;min-height:64px!important}}
+/* 院徽：白色反色版，直接悬浮紫底 */
+.global-brand-mark{
+  background:transparent!important;box-shadow:none!important;
+  border-radius:10px;padding:0;overflow:visible;width:54px;height:54px;
+  margin-right:4px;
+}
+.global-brand-mark-img{display:block;width:100%;height:100%;object-fit:contain}
+.global-brand-title{color:#ffffff!important;font-family:var(--font-serif);font-weight:700;letter-spacing:.04em}
+.global-brand-subtitle{color:rgba(255,255,255,.66)!important;letter-spacing:.16em;font-weight:500}
+.global-nav-link{
+  font-size:13.5px;font-weight:500;letter-spacing:.02em;color:rgba(255,255,255,.88)!important;
+  padding:8px 15px;border-radius:999px;transition:all .2s ease;
+}
+.global-nav-link:hover{color:#ffffff!important;background:rgba(255,255,255,.14);transform:translateY(-1px)}
+.global-nav-link-active{
+  color:#682080!important;background:#ffffff!important;
+  border-color:transparent!important;
+  box-shadow:0 6px 16px -8px rgba(0,0,0,.35)!important;
+}
+.global-nav-utility .global-nav-user{color:rgba(255,255,255,.9)!important}
+/* 紫导航上的主按钮反白：白底紫字 */
+.global-nav .button-primary,.global-nav-utility .button-primary{
+  background:#ffffff!important;color:#682080!important;
+  border:none!important;box-shadow:0 6px 16px -8px rgba(0,0,0,.3)!important;
+}
+.global-nav .button-primary:hover{background:#f3ecfb!important;color:#5f1d77!important}
+
+/* ---------- 按钮：纯紫、纯白字 ---------- */
+.button-primary{
+  background:#682080;
+  border:1px solid rgba(255,255,255,.2);
+  box-shadow:0 12px 26px -12px rgba(104,32,128,.55);
+  color:#ffffff;
+  font-weight:600;letter-spacing:.02em;
+  transition:transform .2s ease,box-shadow .25s ease,background .2s ease;
+}
+.button-primary:hover{background:#5f1d77;transform:translateY(-2px);box-shadow:0 18px 34px -12px rgba(104,32,128,.6)}
+.button-primary:active{transform:translateY(0) scale(.98)}
+.button-secondary-pill{
+  color:#682080;border:1px solid #682080;background:#ffffff;font-weight:500;
+  transition:all .2s ease;
+}
+.button-secondary-pill:hover{background:rgba(104,32,128,.07);border-color:#682080;transform:translateY(-1px)}
+/* 管理端深色顶栏内按钮保持白色描边 */
+.admin-shell-return,.admin-shell-topbar .button-secondary-pill{
+  background:rgba(255,255,255,.07);border-color:rgba(195,159,240,.4);color:#e9d9f7;
+}
+.admin-shell-return:hover{background:rgba(255,255,255,.13);color:#fff}
+
+/* ---------- Hero：纯白底紫斑点 · 衬线大标题 ---------- */
+.text-glow-subtle{color:#682080!important;font-size:12.5px;font-weight:600;letter-spacing:.3em;text-transform:uppercase}
+.typography-hero-display{
+  font-family:var(--font-brush);font-weight:400;letter-spacing:.01em;
+  animation:softFloat 7s ease-in-out infinite;
+}
+.text-gradient-blue{
+  background:#682080!important;background-size:auto!important;animation:none!important;
+}
+/* 大型透明院徽水印，缓慢呼吸融入背景 */
+section:has(.typography-hero-display)::after{
+  content:"";position:absolute;width:340px;height:340px;right:4%;top:12%;
+  background:url("/academic/assets/emblem-mark.png") center/contain no-repeat;
+  opacity:.05;pointer-events:none;z-index:1;
+  animation:emblemBreathe 16s ease-in-out infinite;
+}
+
+/* ---------- 内容区块：纯白/纯淡紫 + 斑点 ---------- */
+.product-tile-light{
+  background-color:#ffffff;
+  background-image:
+    radial-gradient(rgba(104,32,128,.06) 1.3px,transparent 1.3px),
+    radial-gradient(rgba(168,85,247,.05) 1.3px,transparent 1.3px);
+  background-size:26px 26px,26px 26px;
+  border-top:1px solid rgba(104,32,128,.06);
+  animation:speckleDrift 60s linear infinite alternate;
+}
+.product-tile-parchment{background:#f7f2fb;border-top:1px solid rgba(104,32,128,.07)}
+/* 首页功能大区块：淡紫纯底 + 紫斑点（原深紫大块） */
+.product-tile-dark[style*="--home"]{
+  background-color:#f6f0fb!important;
+  background-image:
+    radial-gradient(rgba(104,32,128,.13) 1.6px,transparent 1.6px),
+    radial-gradient(rgba(168,85,247,.09) 1.6px,transparent 1.6px)!important;
+  background-size:30px 30px,30px 30px!important;
+  background-repeat:repeat,repeat!important;
+  border-top:1px solid rgba(104,32,128,.07)!important;
+  box-shadow:none!important;
+  color:#241036!important;
+  animation:speckleDrift 50s linear infinite alternate;
+}
+.product-tile-dark[style*="--home"] .bg-mesh-dark{opacity:0!important}
+.product-tile-dark[style*="--home"] .typography-display-lg.text-glow{
+  color:#241036!important;font-family:var(--font-brush);font-weight:400;
+  text-shadow:0 2px 10px rgba(104,32,128,.14)!important;
+}
+.product-tile-dark[style*="--home"] p,.product-tile-dark[style*="--home"] .typography-lead{
+  color:#57406e!important;
+}
+.product-tile-dark[style*="--home"] .text-shadow-elevated,.product-tile-dark[style*="--home"] .text-shadow-soft{
+  text-shadow:none!important;
+}
+.product-tile-dark[style*="--home"] .glass-card-dark{
+  background:#682080!important;
+  border:1px solid rgba(255,255,255,.18)!important;
+  box-shadow:0 18px 44px -16px rgba(74,16,99,.5)!important;
+  transition:transform .3s ease,box-shadow .3s ease;
+}
+.product-tile-dark[style*="--home"] .glass-card-dark:hover{transform:translateY(-4px);box-shadow:0 26px 54px -18px rgba(74,16,99,.6)!important}
+.product-tile-dark[style*="--home"] .glass-card-dark div:nth-child(3){color:rgba(255,255,255,.8)!important}
+.product-tile-dark[style*="--home"] .feature-visual-dark{
+  background:#ffffff!important;
+  border:1px solid rgba(104,32,128,.12)!important;
+  box-shadow:0 30px 70px -32px rgba(74,16,99,.3)!important;
+}
+.product-tile-dark{background:#1e0d33;border-top:1px solid rgba(195,159,240,.14)}
+.product-tile-light .typography-display-lg,.product-tile-parchment .typography-display-lg,
+.typography-display-lg,.typography-display{
+  font-family:var(--font-brush);font-weight:400;letter-spacing:.005em;
+}
+
+/* 特性演示窗 / 玻璃卡片：白就是白 */
+.feature-visual-light{background:#ffffff;border:1px solid rgba(104,32,128,.12);box-shadow:0 30px 70px -30px rgba(74,16,99,.26)}
+.glass-card{
+  background:#ffffff;
+  border:1px solid rgba(104,32,128,.1);
+  box-shadow:0 20px 46px -24px rgba(74,16,99,.22);
+  transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease;
+}
+.glass-card:hover{transform:translateY(-4px);box-shadow:0 30px 60px -26px rgba(104,32,128,.3);border-color:rgba(104,32,128,.2)}
+.glass-surface{background:#ffffff;border:1px solid rgba(104,32,128,.1);box-shadow:0 24px 60px -26px rgba(74,16,99,.24)}
+.resource-banner,.store-utility-card,.glass-card{border-radius:20px}
+.resource-banner{box-shadow:0 34px 80px -36px rgba(74,16,99,.34);border:1px solid rgba(104,32,128,.14)}
+
+/* ---------- 副导航（内容页） ---------- */
+.sub-nav-frosted{
+  background:rgba(255,255,255,.9);
+  border-bottom:1px solid rgba(104,32,128,.1);
+  backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);
+}
+.sub-nav-title{font-weight:400;letter-spacing:0;font-family:var(--font-kai)}
+.sub-nav-frosted .button-primary{font-size:13px;padding:8px 16px}
+
+/* ---------- 登录 / 注册：纯淡紫底紫斑点 + 纯白玻璃面板 ---------- */
+.auth-shell{
+  background-color:#f6f0fb!important;
+  background-image:
+    radial-gradient(rgba(104,32,128,.15) 1.7px,transparent 1.7px),
+    radial-gradient(rgba(168,85,247,.1) 1.7px,transparent 1.7px)!important;
+  background-size:32px 32px,32px 32px!important;
+  animation:speckleDrift 55s linear infinite alternate;
+}
+.auth-shell-orb-1,.auth-shell-orb-2{opacity:0!important}
+.auth-shell-badge{
+  background:rgba(104,32,128,.08);border:1px solid #682080;border-radius:999px;color:#682080;
+}
+.auth-shell-title{letter-spacing:.02em;color:#241036!important;font-family:var(--font-brush);font-weight:400}
+.auth-shell-description{color:#57406e!important}
+.auth-shell-metric-value{
+  color:#682080!important;font-family:var(--font-serif);
+  background:none!important;-webkit-background-clip:initial!important;-webkit-text-fill-color:initial!important;
+  animation:none!important;
+}
+.auth-shell-metric-label{color:#8a76a6!important}
+.auth-shell-panel>div{
+  background:rgba(255,255,255,.92)!important;
+  border:1px solid #ffffff!important;
+  box-shadow:0 40px 90px -34px rgba(74,16,99,.3)!important;
+}
+.auth-shell-panel>div{animation:softFloat 9s ease-in-out infinite}
+.auth-shell-panel input{
+  background:#ffffff!important;
+  border:1px solid rgba(104,32,128,.25)!important;
+  color:#241036!important;border-radius:14px!important;
+  transition:border-color .2s ease,box-shadow .2s ease;
+}
+.auth-shell-panel input:focus{border-color:#682080!important;box-shadow:0 0 0 4px rgba(104,32,128,.14)!important;background:#ffffff!important}
+.auth-shell-panel input::placeholder{color:#a694be!important}
+
+/* ---------- 页脚：纯淡紫 + 透明院徽 ---------- */
+.mingyue-literary-footer{
+  background-color:#f1e9f7!important;
+  background-image:
+    radial-gradient(rgba(104,32,128,.09) 1.5px,transparent 1.5px),
+    radial-gradient(rgba(168,85,247,.07) 1.5px,transparent 1.5px)!important;
+  background-size:28px 28px,28px 28px!important;
+  border-top:1px solid rgba(104,32,128,.12)!important;
+  color:#43305a!important;
+}
+.mingyue-literary-brand{
+  display:flex;align-items:center;gap:10px;font-weight:700;color:#2b1240!important;
+  font-family:var(--font-serif);letter-spacing:.04em;
+}
+.mingyue-literary-mark{
+  display:inline-flex;width:44px;height:44px;border-radius:10px;overflow:visible;flex:none;
+  background:transparent!important;box-shadow:none!important;
+}
+.mingyue-literary-mark-img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 2px 5px rgba(104,32,128,.22))}
+.mingyue-literary-verse{color:#43305a!important;font-style:normal!important;letter-spacing:.12em}
+.mingyue-literary-column-title{color:#682080!important;letter-spacing:.22em;font-weight:600;font-family:var(--font-serif)}
+.mingyue-literary-list a,.mingyue-literary-list span{color:#57406e!important}
+.mingyue-literary-list a:hover{color:#682080!important}
+.mingyue-literary-bottom{border-top:1px solid rgba(104,32,128,.12)!important;color:#8a76a6!important}
+
+/* ---------- 减弱动效 ---------- */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+
+/* 页脚格言 li 直接文本——footer 翻浅后淡白字隐形，统一深紫灰 */
+.mingyue-literary-footer .mingyue-literary-list li{color:#57406e!important}
+
+/* stats 数字（500+/30+…）：clip-text 在部分浏览器/WebView 失效会隐形 → 纯色紫字，稳 */
+.text-gradient-blue{background:none!important;-webkit-background-clip:initial!important;background-clip:initial!important;color:#682080!important;-webkit-text-fill-color:#682080!important}

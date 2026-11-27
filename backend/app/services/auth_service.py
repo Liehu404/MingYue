@@ -1,13 +1,24 @@
 import random
+import secrets
+import uuid
 from datetime import datetime, timedelta
 
 from sqlalchemy import select, and_
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import User, TeamMember, VerificationCode
 from app.models.base import UserRole
 from app.schemas.auth import RegisterRequest, UserResponse
 from app.utils.security import hash_password, verify_password, create_access_token
+
+
+class SSOConflictError(Exception):
+    """主站账号与现有学术平台账号绑定冲突。"""
+
+
+class SSOInactiveError(Exception):
+    """本地账号未激活，不允许 SSO 自动激活。"""
 
 
 def generate_code() -> str:
@@ -136,6 +147,67 @@ async def authenticate_by_phone(db: AsyncSession, phone: str, code: str) -> dict
         raise ValueError("账户尚未激活，请等待管理员审核")
 
     return await _build_token_response(db, user)
+
+
+async def sso_login(db: AsyncSession, username: str, role: str, sis_id: str) -> dict:
+    """主站会话 -> 学术平台账号。
+
+    匹配顺序：student_id == sis_id -> username == 主站 username。
+    未命中则自动建号；已存在账号不改角色、不改密码，只在 student_id 为空时补写。
+    """
+    username = (username or "").strip()
+    sis_id = (sis_id or "").strip()
+    if not username:
+        raise ValueError("主站账号为空")
+
+    user: User | None = None
+    if sis_id:
+        result = await db.execute(select(User).where(User.student_id == sis_id))
+        user = result.scalar_one_or_none()
+
+    if user is None:
+        result = await db.execute(select(User).where(User.username == username))
+        user = result.scalar_one_or_none()
+        if user is not None and sis_id and user.student_id and user.student_id != sis_id:
+            raise SSOConflictError("该账号已绑定其他学号，请联系管理员处理")
+
+    if user is not None:
+        if not user.is_active:
+            raise SSOInactiveError("账户尚未激活，请联系管理员")
+        if not user.student_id and sis_id:
+            existing = await db.execute(select(User).where(User.student_id == sis_id))
+            if existing.scalar_one_or_none() is None:
+                user.student_id = sis_id
+                db.add(user)
+                await db.commit()
+                await db.refresh(user)
+        return await _build_token_response(db, user)
+
+    new_role = UserRole.advisor_teacher if role == "teacher" else UserRole.student
+    new_user = User(
+        username=username,
+        email=f"sso-{uuid.uuid4().hex}@sso.mingyue.local",
+        password_hash=hash_password(secrets.token_urlsafe(48)),
+        display_name=username,
+        real_name="",
+        student_id=sis_id or None,
+        role=new_role,
+        is_active=True,
+    )
+    db.add(new_user)
+    try:
+        await db.commit()
+        await db.refresh(new_user)
+    except IntegrityError:
+        await db.rollback()
+        # 并发首次登录时可能已被另一个请求创建，回查一次。
+        result = await db.execute(select(User).where(User.username == username))
+        new_user = result.scalar_one_or_none()
+        if new_user is None:
+            raise SSOConflictError("账号或学号已被占用，请联系管理员处理")
+        if not new_user.is_active:
+            raise SSOInactiveError("账户尚未激活，请联系管理员")
+    return await _build_token_response(db, new_user)
 
 
 async def _build_token_response(db: AsyncSession, user: User) -> dict:

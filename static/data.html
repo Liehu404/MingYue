@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>数据管理 · 明月学术交流平台</title>
+  <link rel="icon" type="image/png" href="/academic/assets/emblem-mark.png" />
+  <link rel="stylesheet" href="/academic/assets/mingyue-data.css?v=20261106" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/academic/">
+      <img src="/academic/assets/emblem-mark.png" alt="明月" />
+      <div>
+        <div class="t1">明月学术</div>
+        <div class="t2">My Research OS</div>
+      </div>
+    </a>
+    <span class="top-divider"></span>
+    <span class="top-title">数据管理 · <b>知识库中心</b></span>
+
+    <div class="search-wrap">
+      <div class="search-box">
+        <span style="opacity:.5">⌕</span>
+        <input id="q" type="text" placeholder="检索当前有效版本（课程知识库）" autocomplete="off" />
+      </div>
+      <div class="search-results" id="searchResults">
+        <div class="sr-head">
+          <span id="srCount">输入关键词开始检索</span>
+          <label><input type="checkbox" id="incPersonal" /> 并入我的个人库</label>
+        </div>
+        <div id="srList"></div>
+      </div>
+    </div>
+
+    <div class="user-chip">
+      <div class="av" id="avatar">·</div>
+      <div class="nm"><span id="userName">未登录</span><small id="userRole"></small></div>
+    </div>
+    <button class="icon-btn" id="btnLogout" title="退出登录">⎋</button>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="panel">
+        <div class="panel-head">
+          <h3>知识库</h3>
+          <span class="spacer"></span>
+          <button class="btn sm primary" id="btnNewKb">＋ 新建</button>
+        </div>
+        <div class="kb-list" id="kbList"></div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="stats">
+        <div class="stat"><div class="k">文档总数</div><div class="v" id="stDocs">—</div></div>
+        <div class="stat"><div class="k">版本记录</div><div class="v" id="stVers">—</div></div>
+        <div class="stat"><div class="k">占用空间</div><div class="v" id="stSize">—</div></div>
+        <div class="stat alert"><div class="k">待处理冲突</div><div class="v" id="stConf">—</div></div>
+      </div>
+
+      <div class="tabs" id="tabs">
+        <button class="tab active" data-tab="docs">文档 <span class="badge" id="tabDocCount">0</span></button>
+        <button class="tab" data-tab="conflicts">冲突处理 <span class="badge" id="tabConfCount">0</span></button>
+        <button class="tab" data-tab="sources">数据源</button>
+        <button class="tab" data-tab="jobs">处理流水线</button>
+      </div>
+
+      <section id="view-docs"></section>
+      <section id="view-conflicts" style="display:none"></section>
+      <section id="view-sources" style="display:none"></section>
+      <section id="view-jobs" style="display:none"></section>
+    </main>
+  </div>
+
+  <!-- 上传弹窗 -->
+  <div class="overlay" id="overlay"></div>
+  <div class="modal" id="uploadModal">
+    <div class="modal-head">
+      <h3 id="upTitle">上传到知识库</h3>
+      <span class="spacer"></span>
+      <button class="icon-btn" data-close>✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <div class="dropzone" id="dropzone">
+          <div class="big">⇪</div>
+          <div class="t">点击选择，或把文件拖到这里</div>
+          <div class="d">支持 PDF / Word / PPT / Excel / 视频 / 压缩包，单文件 ≤ 500MB</div>
+          <div id="fileChip"></div>
+        </div>
+        <input type="file" id="fileInput" hidden />
+      </div>
+      <div class="row2">
+        <div class="field"><label>标题</label><input type="text" id="upName" placeholder="默认取文件名" /></div>
+        <div class="field"><label>知识点 / 章节</label><input type="text" id="upTopic" placeholder="如：第三章 神经网络" /></div>
+      </div>
+      <div class="field"><label>变更说明</label><textarea id="upNote" placeholder="这一版改了什么（便于冲突处理时判断）"></textarea></div>
+      <label class="check"><input type="checkbox" id="upAuto" /> 上传后自动设为当前有效版本（旧版本自动停用）</label>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" data-close>取消</button>
+      <button class="btn primary" id="btnSubmitUpload">开始上传</button>
+    </div>
+  </div>
+
+  <!-- 新建知识库 -->
+  <div class="modal" id="kbModal">
+    <div class="modal-head"><h3>新建知识库</h3><span class="spacer"></span><button class="icon-btn" data-close>✕</button></div>
+    <div class="modal-body">
+      <div class="row2">
+        <div class="field"><label>名称</label><input type="text" id="kbName" placeholder="如：机器学习（2026秋）" /></div>
+        <div class="field"><label>类型</label>
+          <select id="kbKind"><option value="course">课程知识库</option><option value="personal">个人知识库</option></select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>课程代码 / 编号</label><input type="text" id="kbCode" placeholder="CS401" /></div>
+        <div class="field"><label>学期</label><input type="text" id="kbTerm" placeholder="2026-秋" /></div>
+      </div>
+      <div class="field"><label>说明</label><textarea id="kbDesc" placeholder="这个知识库收录什么"></textarea></div>
+    </div>
+    <div class="modal-foot"><button class="btn" data-close>取消</button><button class="btn primary" id="btnCreateKb">创建</button></div>
+  </div>
+
+  <!-- 数据源 -->
+  <div class="modal" id="srcModal">
+    <div class="modal-head"><h3>添加数据源</h3><span class="spacer"></span><button class="icon-btn" data-close>✕</button></div>
+    <div class="modal-body">
+      <div class="row2">
+        <div class="field"><label>名称</label><input type="text" id="srcName" placeholder="Canvas 课程文件" /></div>
+        <div class="field"><label>类型</label>
+          <select id="srcType">
+            <option value="canvas">Canvas 数据收集平台</option>
+            <option value="http_json">HTTP JSON 接口</option>
+            <option value="local_dir">服务器本地目录</option>
+            <option value="fastgpt">FastGPT 数据集</option>
+          </select>
+        </div>
+      </div>
+      <div id="srcFields"></div>
+      <label class="check"><input type="checkbox" id="srcAuto" /> 启用定时自动同步（每小时检查）</label>
+    </div>
+    <div class="modal-foot"><button class="btn" data-close>取消</button><button class="btn primary" id="btnCreateSrc">保存</button></div>
+  </div>
+
+  <!-- 文档详情抽屉 -->
+  <div class="drawer" id="drawer">
+    <div class="drawer-head">
+      <div style="flex:1">
+        <h3 id="dTitle">文档</h3>
+        <div class="sub" id="dSub"></div>
+      </div>
+      <button class="icon-btn" data-close-drawer>✕</button>
+    </div>
+    <div class="drawer-body" id="dBody"></div>
+  </div>
+
+  <!-- 登录 -->
+  <div class="login-mask" id="loginMask">
+    <div class="login-card">
+      <img src="/academic/assets/emblem-mark.png" alt="明月" />
+      <h2>数据管理</h2>
+      <p>MY RESEARCH OS · DATA HUB</p>
+      <div class="login-err" id="loginErr"></div>
+      <div class="field"><label>用户名 / 手机号</label><input type="text" id="lgUser" autocomplete="username" /></div>
+      <div class="field"><label>密码</label><input type="password" id="lgPass" autocomplete="current-password" /></div>
+      <button class="btn primary" id="btnLogin" style="width:100%;justify-content:center;padding:11px">登 录</button>
+      <p style="margin:16px 0 0"><a href="/academic/">← 返回明月学术首页</a></p>
+    </div>
+  </div>
+
+  <div class="toasts" id="toasts"></div>
+  <script src="/academic/assets/mingyue-data.js?v=20261106"></script>
+</body>
+</html>
