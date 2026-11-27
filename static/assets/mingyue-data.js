@@ -779,10 +779,10 @@
     $('#lgUser').addEventListener('keydown', e => { if (e.key === 'Enter') $('#lgPass').focus(); });
 
     $('#btnLogout').onclick = () => {
-      // 明确退出：清学术态并回到主站首页，不再自动 SSO 回来
+      // 明确退出：清学术态并同时退出主站会话
       sessionStorage.setItem('mq_sso_disabled', '1');
       localStorage.removeItem('token'); localStorage.removeItem('user');
-      location.href = '/';
+      location.href = '/logout';
     };
 
     $('#tabs').addEventListener('click', e => {

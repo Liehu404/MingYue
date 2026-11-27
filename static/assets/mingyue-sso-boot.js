@@ -32,7 +32,7 @@
       e.preventDefault();
       e.stopPropagation();
       markLogout();
-      location.replace('/');  // 回到明月大模型主站
+      location.replace('/logout');  // 同时退出主站会话
     }
   }, true);
 
