@@ -1,19 +1,22 @@
 /* 首页 Hero 背景轮播：/academic/uploads/hero/1-9.jpg，每 5 秒切换一次。
  *
- * 主题 CSS 用 `section:has(.typography-hero-display){ background: ... !important }`
- * 把 hero 背景固定成渐变，所以这里用更高优先级的选择器 + CSS 变量覆盖，
- * 同时继续通过 dashboard-hero 区域驱动 React（保持和后台配置机制一致）。
+ * - 用 ::before 画背景图，opacity 过渡实现淡出/淡入，避免生硬切换。
+ * - 用 ::after 统一加白色 + 降饱和掩膜，降低照片颜色刺眼程度。
+ * - 隐藏原主题的 hero-visual-wrap（白色方框 + 紫色轨道插画）。
+ * - 仍通过 dashboard-hero 区域驱动 React，保持与后台配置机制一致。
  */
 (function () {
   var KEY = 'mingyue_bg_zones';
   var ZONE = 'dashboard-hero';
   var INTERVAL = 5000;
+  var FADE_MS = 650;
   var VER = '20261127';
   var IMAGES = [];
   for (var n = 1; n <= 9; n++) IMAGES.push('/academic/uploads/hero/' + n + '.jpg?v=' + VER);
 
   var nativeSet = Storage.prototype.setItem;
   var current = IMAGES[0];
+  var fadeTimer = null;
 
   function isHome() { return /^\/academic\/?$/.test(location.pathname); }
 
@@ -38,23 +41,51 @@
     return el;
   }
 
-  function paint(url) {
+  function setInitial(url) {
     var sec = findHero();
-    if (!sec) {
-      setTimeout(function () { paint(url); }, 120);
-      return;
-    }
+    if (!sec) { setTimeout(function () { setInitial(url); }, 120); return; }
     sec.setAttribute('data-mq-hero', '1');
     sec.style.setProperty('--mq-hero-bg', 'url("' + url + '")');
+    sec.style.setProperty('--mq-hero-opacity', '1');
   }
 
-  // 覆盖主题 CSS 的 !important 渐变
+  function show(url) {
+    var sec = findHero();
+    if (!sec) { setTimeout(function () { show(url); }, 120); return; }
+    sec.setAttribute('data-mq-hero', '1');
+    sec.style.setProperty('--mq-hero-opacity', '0');
+    clearTimeout(fadeTimer);
+    fadeTimer = setTimeout(function () {
+      sec.style.setProperty('--mq-hero-bg', 'url("' + url + '")');
+      sec.style.setProperty('--mq-hero-opacity', '1');
+    }, FADE_MS);
+  }
+
   var style = document.createElement('style');
   style.textContent =
+    /* 背景由伪元素绘制，section 本身透明 */
     'section[data-mq-hero]:has(.typography-hero-display){' +
-    'background:radial-gradient(ellipse at 50% 45%, rgba(255,255,255,.86) 0%, rgba(255,255,255,.68) 40%, rgba(255,255,255,.35) 72%, rgba(255,255,255,.15) 100%), var(--mq-hero-bg) center center / cover no-repeat !important;' +
-    'background-color:transparent !important;' +
-    '}';
+    'background:transparent !important;background-color:transparent !important;' +
+    '}' +
+    /* 照片层：淡入淡出 + 降饱和/压亮度 */
+    'section[data-mq-hero]:has(.typography-hero-display)::before{' +
+    'content:"";position:absolute;inset:0 !important;left:0 !important;right:0 !important;top:0 !important;bottom:0 !important;width:100% !important;height:100% !important;margin:0 !important;z-index:0;pointer-events:none;' +
+    'background-image:var(--mq-hero-bg);background-size:cover;background-position:center center;background-repeat:no-repeat;' +
+    'opacity:var(--mq-hero-opacity,1);transition:opacity ' + (FADE_MS / 1000) + 's ease-in-out;' +
+    'filter:saturate(.55) brightness(.92) contrast(.95);animation:none !important;' +
+    '}' +
+    /* 统一掩膜：整体压白并降饱和，中心更白保证文字 */
+    'section[data-mq-hero]:has(.typography-hero-display)::after{' +
+    'content:"";position:absolute;inset:0 !important;left:0 !important;right:0 !important;top:0 !important;bottom:0 !important;width:100% !important;height:100% !important;margin:0 !important;z-index:1;pointer-events:none;' +
+    'background-image:radial-gradient(ellipse at 50% 45%, rgba(255,255,255,.90) 0%, rgba(255,255,255,.80) 35%, rgba(255,255,255,.70) 65%, rgba(255,255,255,.62) 100%);' +
+    'background-color:rgba(255,255,255,.12);' +
+    'opacity:1 !important;animation:none !important;' +
+    '}' +
+    /* 内容在掩膜上方 */
+    'section[data-mq-hero] .tile-content{z-index:2 !important;}' +
+    /* 去掉白色方框和轨道插画 */
+    'section[data-mq-hero] .hero-visual-wrap,' +
+    'section[data-mq-hero] .hero-ambient-orb{display:none !important;}';
   document.head.appendChild(style);
 
   for (var i = 0; i < IMAGES.length; i++) {
@@ -64,7 +95,7 @@
 
   if (isHome()) {
     apply(IMAGES[0], false);
-    paint(IMAGES[0]);
+    setInitial(IMAGES[0]);
   }
 
   var idx = 0;
@@ -73,11 +104,20 @@
     idx = (idx + 1) % IMAGES.length;
     current = IMAGES[idx];
     apply(current, true);
-    paint(current);
+    show(current);
   }, INTERVAL);
 
-  // 兜底：React 重渲染后确保覆盖仍在
+  // 兜底：React 重渲染后确保变量仍在
   setInterval(function () {
-    if (isHome()) paint(current);
+    if (!isHome()) return;
+    var sec = findHero();
+    if (!sec) return;
+    sec.setAttribute('data-mq-hero', '1');
+    if (!sec.style.getPropertyValue('--mq-hero-bg')) {
+      sec.style.setProperty('--mq-hero-bg', 'url("' + current + '")');
+    }
+    if (!sec.style.getPropertyValue('--mq-hero-opacity')) {
+      sec.style.setProperty('--mq-hero-opacity', '1');
+    }
   }, 1000);
 })();
